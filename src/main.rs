@@ -13,9 +13,8 @@ mod solver;
 mod top;
 
 use conditions::*;
-use corner::*;
 
-use prelude::{BoundaryCondition, CalculateTemperature, SolverInfo, T};
+use prelude::{SolverInfo, T};
 
 fn main() {
     let flux = -10.;

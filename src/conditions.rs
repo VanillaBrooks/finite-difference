@@ -35,7 +35,8 @@ impl BoundaryCondition for HeatFlux {
 
 #[derive(Copy, Clone)]
 pub(crate) struct Temperature {
-    temperature: T,
+    #[allow(dead_code)]
+    pub(crate) temperature: T,
 }
 
 //impl BoundaryCondition for Temperature { }

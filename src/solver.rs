@@ -108,6 +108,41 @@ pub(crate) fn solver<A, B, C, D, E, F>(
                          * Start with corners
                          *
                          * */
+                        (x_, y_, z_) if x_ == 0 && y_ == 0 && z_ == 0 => conditions
+                            .corners
+                            .left_bot_back
+                            .calculate_temperature(information, &s),
+                        (x_, y_, z_) if x_ == 0 && y_ == 0 && z_ == div_end => conditions
+                            .corners
+                            .left_bot_front
+                            .calculate_temperature(information, &s),
+                        (x_, y_, z_) if x_ == 0 && y_ == div_end && z_ == 0 => conditions
+                            .corners
+                            .left_top_back
+                            .calculate_temperature(information, &s),
+                        (x_, y_, z_) if x_ == 0 && y_ == div_end && z_ == div_end => conditions
+                            .corners
+                            .left_top_front
+                            .calculate_temperature(information, &s),
+
+                        (x_, y_, z_) if x_ == div_end && y_ == 0 && z_ == 0 => conditions
+                            .corners
+                            .right_bot_back
+                            .calculate_temperature(information, &s),
+                        (x_, y_, z_) if x_ == div_end && y_ == 0 && z_ == div_end => conditions
+                            .corners
+                            .right_bot_front
+                            .calculate_temperature(information, &s),
+                        (x_, y_, z_) if x_ == div_end && y_ == div_end && z_ == 0 => conditions
+                            .corners
+                            .right_top_back
+                            .calculate_temperature(information, &s),
+                        (x_, y_, z_) if x_ == div_end && y_ == div_end && z_ == div_end => {
+                            conditions
+                                .corners
+                                .right_top_front
+                                .calculate_temperature(information, &s)
+                        }
 
                         /*
                          * Do edges

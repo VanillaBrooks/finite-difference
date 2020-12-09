@@ -1,7 +1,6 @@
 use crate::conditions::*;
 use crate::corner::*;
 use crate::internal;
-use crate::prelude::*;
 
 use super::back::BackSurface;
 use super::bot::BottomSurface;
@@ -291,13 +290,12 @@ where
     E: BoundaryCondition,
     F: BoundaryCondition,
 {
-    right_top_back: RightTopBack<A, C, F>,
-    right_top_front: RightTopFront<A, C, E>,
-    right_bot_back: RightBottomBack<A, D, F>,
-    right_bot_front: RightBottomFront<A, D, E>,
-
-    left_top_back: LeftTopBack<B, C, F>,
-    left_top_front: LeftTopFront<B, C, E>,
-    left_bot_back: LeftBottomBack<B, D, F>,
-    left_bot_front: LeftBottomFront<B, D, E>,
+    pub(crate) right_top_back: RightTopBack<A, C, F>,
+    pub(crate) right_top_front: RightTopFront<A, C, E>,
+    pub(crate) right_bot_back: RightBottomBack<A, D, F>,
+    pub(crate) right_bot_front: RightBottomFront<A, D, E>,
+    pub(crate) left_top_back: LeftTopBack<B, C, F>,
+    pub(crate) left_top_front: LeftTopFront<B, C, E>,
+    pub(crate) left_bot_back: LeftBottomBack<B, D, F>,
+    pub(crate) left_bot_front: LeftBottomFront<B, D, E>,
 }
