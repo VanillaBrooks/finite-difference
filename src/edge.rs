@@ -163,8 +163,8 @@ where
 }
 
 pub struct BackBot<V: BoundaryCondition, K: BoundaryCondition> {
-    pub bot_boundary: V,
-    pub back_boundary: K,
+    pub back_boundary: V,
+    pub bot_boundary: K,
 }
 impl<V, K> CalculateTemperature for BackBot<V, K>
 where
