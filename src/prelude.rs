@@ -4,6 +4,8 @@ pub trait CalculateTemperature {
     fn calculate_temperature(&self, info: Information, solver: &SolverInfo) -> T;
 }
 
+pub use crate::conditions::BoundaryCondition;
+
 /// Temperature information for the nodes around the current node
 ///
 /// x_front denotes a temperature at x + 1

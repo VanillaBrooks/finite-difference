@@ -1,22 +1,26 @@
 use crate::prelude::*;
 
-#[derive(typed_builder::TypedBuilder)]
-pub struct TopBoundary {
-    pub(crate) h: T,
-    pub(crate) t_inf: T,
+pub struct TopSurface<V: BoundaryCondition> {
+    pub top_boundary: V,
 }
 
-impl CalculateTemperature for TopBoundary {
+impl<V> CalculateTemperature for TopSurface<V>
+where
+    V: BoundaryCondition,
+{
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.i_back / (2.0 * s.x2()))
-            + (info.j_back / s.y2())
-            + (info.k_back / (2.0 * s.z2()))
+        let m = (info.j_back / s.y2())
+            + (info.i_back / (2.0 * s.x2()))
             + (info.i_front / (2.0 * s.x2()))
-            + (self.h * self.t_inf / (s.k * s.del_y))
-            + (info.k_front / (2.0 * s.z2()));
+            + (info.k_back / (2.0 * s.z2()))
+            + (info.k_front / (2.0 * s.z2()))
+            + (self.top_boundary.lhs_constant(&info, s));
         let numerator = m + (s.q_dot / (2.0 * s.k));
 
-        let div = (1. / s.x2()) + (1. / s.z2()) + (1. / s.y2()) + (self.h / (s.k * s.del_y));
+        let div = (1. / s.x2())
+            + (1. / s.z2())
+            + (1. / s.y2())
+            + self.top_boundary.rhs_constant(&info, s);
 
         numerator / div
     }

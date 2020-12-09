@@ -1,16 +1,18 @@
 use crate::prelude::*;
 
-#[derive(typed_builder::TypedBuilder)]
-pub struct RightBoundary {
-    heat_flux: T,
+pub struct RightSurface<V: BoundaryCondition> {
+    pub right_boundary: V,
 }
 
-impl CalculateTemperature for RightBoundary {
+impl<V> CalculateTemperature for RightSurface<V>
+where
+    V: BoundaryCondition,
+{
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
         let m = (info.i_back / s.x2())
             + (info.j_back / (2.0 * s.y2()))
             + (info.k_back / (2.0 * s.z2()))
-            - self.heat_flux / (s.k * s.del_x * s.del_y * s.del_z)
+            + self.right_boundary.lhs_constant(&info, s)
             + (info.j_front / (2.0 * s.del_y))
             + (info.k_front / (2.0 * s.z2()));
 
