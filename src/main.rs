@@ -17,20 +17,20 @@ use conditions::*;
 use prelude::{SolverInfo, T};
 
 fn main() {
-    let flux = -10.;
-    let h = 20.;
-    let t_inf = 400.;
-    let energy_generation = 1.;
-    let thermal_conductivity = 3.;
+    let flux = -100.;
+    let h = 5.;
+    let t_inf = 273. + 25.;
+    let energy_generation = 0.;
+    let thermal_conductivity = 43.;
 
-    let top_boundary = Convection { h, t_inf };
-    let bot_boundary = HeatFlux { heat_flux: 0. };
+    let top_boundary = HeatFlux { heat_flux: flux };
+    let bot_boundary = Convection { h, t_inf };
 
-    let front_boundary = HeatFlux { heat_flux: 0. };
-    let back_boundary = HeatFlux { heat_flux: 0. };
+    let front_boundary = Convection { h, t_inf };
+    let back_boundary = Convection { h, t_inf };
 
-    let left_boundary = HeatFlux { heat_flux: 0. };
-    let right_boundary = HeatFlux { heat_flux: flux };
+    let left_boundary = Convection { h, t_inf };
+    let right_boundary = Convection { h, t_inf };
 
     let setup = setup::SetupConditions {
         right_boundary,
@@ -44,10 +44,10 @@ fn main() {
     let bcs = setup.make_boundaries();
 
     let params = SolverParams {
-        x_len: 1.,
-        y_len: 1.,
-        z_len: 1.,
-        divisions: 30,
+        x_len: 0.5,
+        y_len: 0.5,
+        z_len: 0.5,
+        divisions: 100,
     };
 
     let div: T = params.divisions as f64;

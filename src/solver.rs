@@ -69,7 +69,7 @@ pub(crate) fn solver<A, B, C, D, E, F>(
                     /*
                      * check the forward conditions
                      */
-                    if x == params.divisions - 1 {
+                    if x == params.div_end() {
                         i_front = 0.
                     } else {
                         i_front = previous_temps[[x + 1, y, z]];
@@ -77,14 +77,14 @@ pub(crate) fn solver<A, B, C, D, E, F>(
 
                     //println!("x forward");
 
-                    if y == params.divisions - 1 {
+                    if y == params.div_end() {
                         j_front = 0.;
                     } else {
                         j_front = previous_temps[[x, y + 1, z]];
                     }
                     //println!("y forward");
 
-                    if z == params.divisions - 1 {
+                    if z == params.div_end() {
                         k_front = 0.;
                     } else {
                         //dbg! {x,y,z+1};
@@ -236,7 +236,7 @@ pub(crate) fn solver<A, B, C, D, E, F>(
             } // y
         } //x
 
-        if i % 1000 == 0 {
+        if i % 100 == 0 {
             println! {"i:{}", i}
         }
 
