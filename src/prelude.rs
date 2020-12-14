@@ -24,19 +24,10 @@ pub struct Information {
 pub struct SolverInfo {
     pub(crate) k: T,
     pub(crate) q_dot: T,
-    pub(crate) del_x: T,
-    pub(crate) del_y: T,
-    pub(crate) del_z: T,
+    pub(crate) del: T,
 }
 impl SolverInfo {
-    pub(crate) fn x2(&self) -> T {
-        self.del_x * self.del_x
-    }
-
-    pub(crate) fn y2(&self) -> T {
-        self.del_y * self.del_y
-    }
-    pub(crate) fn z2(&self) -> T {
-        self.del_z * self.del_z
+    pub(crate) fn del2(&self) -> T {
+        self.del * self.del
     }
 }

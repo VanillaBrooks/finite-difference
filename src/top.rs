@@ -9,18 +9,15 @@ where
     V: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.j_back / s.y2())
-            + (info.i_back / (2.0 * s.x2()))
-            + (info.i_front / (2.0 * s.x2()))
-            + (info.k_back / (2.0 * s.z2()))
-            + (info.k_front / (2.0 * s.z2()))
-            + (self.top_boundary.lhs_constant(&info, s));
-        let numerator = m + (s.q_dot / (2.0 * s.k));
+        let area = s.del2();
 
-        let div = (1. / s.x2())
-            + (1. / s.z2())
-            + (1. / s.y2())
-            + self.top_boundary.rhs_constant(&info, s);
+        let m = (info.i_front + info.i_back + info.k_front + info.k_back) / 2.
+            + info.j_back
+            + self.top_boundary.lhs_constant(&info, &s, area);
+
+        let numerator = m + (s.q_dot * s.del2() / (2.0 * s.k));
+
+        let div = 3. + self.top_boundary.rhs_constant(&info, s, area);
 
         numerator / div
     }

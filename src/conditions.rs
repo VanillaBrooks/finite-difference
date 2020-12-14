@@ -6,18 +6,17 @@ pub(crate) struct Convection {
     pub(crate) t_inf: T,
 }
 impl BoundaryCondition for Convection {
-    fn lhs_constant(&self, _: &Information, s: &SolverInfo) -> T {
-        // TODO: change this del_y to be generic
-        self.h * self.t_inf / (s.k * s.del_y)
+    fn lhs_constant(&self, _: &Information, s: &SolverInfo, area: T) -> T {
+        area * self.h * self.t_inf / (s.k * s.del)
     }
-    fn rhs_constant(&self, _: &Information, s: &SolverInfo) -> T {
-        self.h / (s.k * s.del_y)
+    fn rhs_constant(&self, _: &Information, s: &SolverInfo, area: T) -> T {
+        area * self.h / (s.k * s.del)
     }
 }
 
 pub trait BoundaryCondition {
-    fn lhs_constant(&self, info: &Information, s: &SolverInfo) -> T;
-    fn rhs_constant(&self, info: &Information, s: &SolverInfo) -> T;
+    fn lhs_constant(&self, info: &Information, s: &SolverInfo, area: T) -> T;
+    fn rhs_constant(&self, info: &Information, s: &SolverInfo, area: T) -> T;
 }
 
 #[derive(Copy, Clone)]
@@ -25,10 +24,10 @@ pub(crate) struct HeatFlux {
     pub(crate) heat_flux: T,
 }
 impl BoundaryCondition for HeatFlux {
-    fn lhs_constant(&self, _: &Information, s: &SolverInfo) -> T {
-        -1. * self.heat_flux / (s.k * s.del_x * s.del_y * s.del_z)
+    fn lhs_constant(&self, _: &Information, s: &SolverInfo, area: T) -> T {
+        area * self.heat_flux / (s.k * s.del)
     }
-    fn rhs_constant(&self, _: &Information, _: &SolverInfo) -> T {
+    fn rhs_constant(&self, _: &Information, _: &SolverInfo, _area: T) -> T {
         0.
     }
 }

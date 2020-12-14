@@ -10,20 +10,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.i_back / (2. * s.x2()))
-            + (info.k_front / (4. * s.z2()))
-            + (info.k_back / (4. * s.z2()))
-            + (info.j_back / (2. * s.y2()))
-            + self.right_boundary.lhs_constant(&info, s)
-            + self.top_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.top_boundary.rhs_constant(&info, s)
-            + self.right_boundary.rhs_constant(&info, s);
+        let m = ((info.i_back + info.j_back) / 2.)
+            + ((info.k_back + info.k_front) / 4.)
+            + self.right_boundary.lhs_constant(&info, s, area)
+            + self.top_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.right_boundary.rhs_constant(&info, s, area)
+            + self.top_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -37,20 +35,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.i_front / (2. * s.x2()))
-            + (info.k_front / (4. * s.z2()))
-            + (info.k_back / (4. * s.z2()))
-            + (info.j_back / (2. * s.y2()))
-            + self.left_boundary.lhs_constant(&info, s)
-            + self.top_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.top_boundary.rhs_constant(&info, s)
-            + self.left_boundary.rhs_constant(&info, s);
+        let m = ((info.i_front + info.j_back) / 2.)
+            + ((info.k_back + info.k_front) / 4.)
+            + self.left_boundary.lhs_constant(&info, s, area)
+            + self.top_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.left_boundary.rhs_constant(&info, s, area)
+            + self.top_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -64,20 +60,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.i_front / (2. * s.x2()))
-            + (info.k_front / (4. * s.z2()))
-            + (info.k_back / (4. * s.z2()))
-            + (info.j_front / (2. * s.y2()))
-            + self.left_boundary.lhs_constant(&info, s)
-            + self.bot_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.bot_boundary.rhs_constant(&info, s)
-            + self.left_boundary.rhs_constant(&info, s);
+        let m = ((info.i_front + info.j_front) / 2.)
+            + ((info.k_back + info.k_front) / 4.)
+            + self.left_boundary.lhs_constant(&info, s, area)
+            + self.bot_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.left_boundary.rhs_constant(&info, s, area)
+            + self.bot_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -91,20 +85,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.i_back / (2. * s.x2()))
-            + (info.k_front / (4. * s.z2()))
-            + (info.k_back / (4. * s.z2()))
-            + (info.j_front / (2. * s.y2()))
-            + self.right_boundary.lhs_constant(&info, s)
-            + self.bot_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.bot_boundary.rhs_constant(&info, s)
-            + self.right_boundary.rhs_constant(&info, s);
+        let m = ((info.i_back + info.j_front) / 2.)
+            + ((info.k_back + info.k_front) / 4.)
+            + self.right_boundary.lhs_constant(&info, s, area)
+            + self.bot_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.right_boundary.rhs_constant(&info, s, area)
+            + self.bot_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -118,20 +110,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_back / (2. * s.z2()))
-            + (info.i_front / (4. * s.x2()))
-            + (info.i_back / (4. * s.x2()))
-            + (info.j_back / (2. * s.y2()))
-            + self.front_boundary.lhs_constant(&info, s)
-            + self.top_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.top_boundary.rhs_constant(&info, s)
-            + self.front_boundary.rhs_constant(&info, s);
+        let m = ((info.k_back + info.j_back) / 2.)
+            + ((info.i_front + info.i_back) / 4.)
+            + self.front_boundary.lhs_constant(&info, s, area)
+            + self.top_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.top_boundary.rhs_constant(&info, s, area)
+            + self.front_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -145,20 +135,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_front / (2. * s.z2()))
-            + (info.i_front / (4. * s.x2()))
-            + (info.i_back / (4. * s.x2()))
-            + (info.j_back / (2. * s.y2()))
-            + self.back_boundary.lhs_constant(&info, s)
-            + self.top_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.top_boundary.rhs_constant(&info, s)
-            + self.back_boundary.rhs_constant(&info, s);
+        let m = ((info.k_front + info.j_back) / 2.)
+            + ((info.i_front + info.i_back) / 4.)
+            + self.back_boundary.lhs_constant(&info, s, area)
+            + self.top_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.top_boundary.rhs_constant(&info, s, area)
+            + self.back_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -172,20 +160,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_front / (2. * s.z2()))
-            + (info.i_front / (4. * s.x2()))
-            + (info.i_back / (4. * s.x2()))
-            + (info.j_front / (2. * s.y2()))
-            + self.back_boundary.lhs_constant(&info, s)
-            + self.bot_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.bot_boundary.rhs_constant(&info, s)
-            + self.back_boundary.rhs_constant(&info, s);
+        let m = ((info.k_front + info.j_front) / 2.)
+            + ((info.i_front + info.i_back) / 4.)
+            + self.back_boundary.lhs_constant(&info, s, area)
+            + self.bot_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.bot_boundary.rhs_constant(&info, s, area)
+            + self.back_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -199,22 +185,26 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_back / (2. * s.z2()))
-            + (info.i_front / (4. * s.x2()))
-            + (info.i_back / (4. * s.x2()))
-            + (info.j_front / (2. * s.y2()))
-            + self.front_boundary.lhs_constant(&info, s)
-            + self.bot_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.bot_boundary.rhs_constant(&info, s)
-            + self.front_boundary.rhs_constant(&info, s);
+        let m = ((info.k_back + info.j_front) / 2.)
+            + ((info.i_front + info.i_back) / 4.)
+            + self.front_boundary.lhs_constant(&info, s, area)
+            + self.bot_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.bot_boundary.rhs_constant(&info, s, area)
+            + self.front_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
+
+//
+//
+// j edge stuff
+//
+//
 
 pub struct FrontRight<V: BoundaryCondition, K: BoundaryCondition> {
     pub front_boundary: V,
@@ -226,20 +216,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_back / (2. * s.z2()))
-            + (info.j_front / (4. * s.y2()))
-            + (info.j_back / (4. * s.y2()))
-            + (info.i_back / (2. * s.x2()))
-            + self.front_boundary.lhs_constant(&info, s)
-            + self.right_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.right_boundary.rhs_constant(&info, s)
-            + self.front_boundary.rhs_constant(&info, s);
+        let m = ((info.k_back + info.i_back) / 2.)
+            + ((info.j_front + info.j_back) / 4.)
+            + self.front_boundary.lhs_constant(&info, s, area)
+            + self.right_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.right_boundary.rhs_constant(&info, s, area)
+            + self.front_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -253,20 +241,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_back / (2. * s.z2()))
-            + (info.j_front / (4. * s.y2()))
-            + (info.j_back / (4. * s.y2()))
-            + (info.i_front / (2. * s.x2()))
-            + self.front_boundary.lhs_constant(&info, s)
-            + self.left_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.left_boundary.rhs_constant(&info, s)
-            + self.front_boundary.rhs_constant(&info, s);
+        let m = ((info.k_back + info.i_front) / 2.)
+            + ((info.j_front + info.j_back) / 4.)
+            + self.front_boundary.lhs_constant(&info, s, area)
+            + self.left_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.left_boundary.rhs_constant(&info, s, area)
+            + self.front_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 
@@ -280,20 +266,18 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_front / (2. * s.z2()))
-            + (info.j_front / (4. * s.y2()))
-            + (info.j_back / (4. * s.y2()))
-            + (info.i_front / (2. * s.x2()))
-            + self.back_boundary.lhs_constant(&info, s)
-            + self.left_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.left_boundary.rhs_constant(&info, s)
-            + self.left_boundary.rhs_constant(&info, s);
+        let m = ((info.k_front + info.i_front) / 2.)
+            + ((info.j_front + info.j_back) / 4.)
+            + self.back_boundary.lhs_constant(&info, s, area)
+            + self.left_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.left_boundary.rhs_constant(&info, s, area)
+            + self.back_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }
 pub struct BackRight<V: BoundaryCondition, K: BoundaryCondition> {
@@ -306,19 +290,17 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
-        let m = (info.k_front / (2. * s.z2()))
-            + (info.j_front / (4. * s.y2()))
-            + (info.j_back / (4. * s.y2()))
-            + (info.i_back / (2. * s.x2()))
-            + self.back_boundary.lhs_constant(&info, s)
-            + self.right_boundary.lhs_constant(&info, s);
+        let area = s.del2() / 2.;
 
-        let div = (1. / (2. * s.x2()))
-            + (1. / (2. * s.z2()))
-            + (1. / (2. * s.y2()))
-            + self.right_boundary.rhs_constant(&info, s)
-            + self.back_boundary.rhs_constant(&info, s);
+        let m = ((info.k_front + info.i_back) / 2.)
+            + ((info.j_front + info.j_back) / 4.)
+            + self.back_boundary.lhs_constant(&info, s, area)
+            + self.right_boundary.lhs_constant(&info, s, area);
 
-        (m + (s.q_dot / (s.k * 4.))) / div
+        let div = 3. / 2.
+            + self.right_boundary.rhs_constant(&info, s, area)
+            + self.back_boundary.rhs_constant(&info, s, area);
+
+        (m + (s.q_dot * s.del2() / (s.k * 4.))) / div
     }
 }

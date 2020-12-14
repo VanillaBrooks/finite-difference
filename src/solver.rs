@@ -16,7 +16,7 @@ pub(crate) fn solver<A, B, C, D, E, F>(
     F: BoundaryCondition,
 {
     let mut previous_temps: ndarray::Array3<f64> =
-        ndarray::Array3::zeros((params.divisions, params.divisions, params.divisions));
+        ndarray::Array3::ones((params.divisions, params.divisions, params.divisions)) * 273.;
 
     let mut i = 0;
 
@@ -236,13 +236,27 @@ pub(crate) fn solver<A, B, C, D, E, F>(
             } // y
         } //x
 
-        if i % 100 == 0 {
+        if i % 1_000 == 0 {
             println! {"i:{}", i}
         }
 
         previous_temps = current_temps;
-        if i == 10_000 {
-            dbg! {&previous_temps.slice(ndarray::s!(params.div_end(),..,..))};
+        if i == params.iterations {
+            dbg! {&previous_temps.slice(ndarray::s!(params.div_end(), .., ..))};
+            let max: &T = previous_temps
+                .iter()
+                .max_by(|left, right| left.partial_cmp(right).unwrap())
+                .unwrap();
+
+            let min: &T = previous_temps
+                .iter()
+                .min_by(|left, right| left.partial_cmp(right).unwrap())
+                .unwrap();
+
+            dbg! {max};
+            dbg! {min};
+
+            //dbg! {&previous_temps.slice(ndarray::s!(params.div_end(), .., ..))};
             break;
         }
 
