@@ -1,6 +1,6 @@
 use crate::prelude::*;
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, serde::Serialize)]
 pub(crate) struct Convection {
     pub(crate) h: T,
     pub(crate) t_inf: T,
@@ -17,9 +17,12 @@ impl BoundaryCondition for Convection {
 pub trait BoundaryCondition {
     fn lhs_constant(&self, info: &Information, s: &SolverInfo, area: T) -> T;
     fn rhs_constant(&self, info: &Information, s: &SolverInfo, area: T) -> T;
+    fn constant_temperature(&self) -> Option<T> {
+        None
+    }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, serde::Serialize)]
 pub(crate) struct HeatFlux {
     pub(crate) heat_flux: T,
 }
@@ -32,10 +35,20 @@ impl BoundaryCondition for HeatFlux {
     }
 }
 
-#[derive(Copy, Clone)]
+#[derive(Copy, Clone, serde::Serialize)]
 pub(crate) struct Temperature {
     #[allow(dead_code)]
     pub(crate) temperature: T,
 }
 
-//impl BoundaryCondition for Temperature { }
+impl BoundaryCondition for Temperature {
+    fn lhs_constant(&self, _: &Information, _: &SolverInfo, _: T) -> T {
+        unimplemented!()
+    }
+    fn rhs_constant(&self, _: &Information, _: &SolverInfo, _area: T) -> T {
+        unimplemented!()
+    }
+    fn constant_temperature(&self) -> Option<T> {
+        Some(self.temperature)
+    }
+}

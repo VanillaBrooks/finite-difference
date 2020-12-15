@@ -9,6 +9,8 @@ where
     V: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.bot_boundary);
+
         let area = s.del2();
 
         let m = (info.i_front + info.i_back + info.k_front + info.k_back) / 2.

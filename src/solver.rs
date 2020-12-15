@@ -40,7 +40,7 @@ where
         ndarray::Zip::from(&mut current_temps)
             .and(&points)
             .par_apply_collect(|temps, point| {
-                *temps = step(&previous_temps, &conditions, &params, &s, *point)
+                *temps = step(&previous_temps, &conditions, &params, &s, point)
             });
 
         if i % 1_000 == 0 {
@@ -49,13 +49,13 @@ where
 
         let curr_error = error_type.calculate_error(&previous_temps, &current_temps);
 
-        // check if we need to record this data for plotting
-        if i % params.steps_before_recording == 0 {
+        if i % params.error_steps == 0 {
             error_decay.add_error(curr_error);
+        }
 
+        // check if we need to record this data for plotting
+        if i % params.data_steps == 0 {
             let raw_data = current_temps.clone().into_raw_vec();
-            //let m = params.div_end();
-
             let new_data = StepData {
                 step: i,
                 data: raw_data,
@@ -65,12 +65,21 @@ where
         }
 
         if curr_error < params.error_epsilon {
+            // record the current data
+            let raw_data = current_temps.clone().into_raw_vec();
+            let new_data = StepData {
+                step: i,
+                data: raw_data,
+            };
+            step_data.push(new_data);
+
             // we are below the threshold for error right now, we can quit here
 
             let result = SimulationResult {
                 step_data,
                 error_decay,
                 size: params.divisions,
+                num_steps: i,
             };
 
             return result;
@@ -82,7 +91,7 @@ where
     } // loop
 }
 
-#[derive(Default, Debug, Clone, Copy)]
+#[derive(Default, Debug)]
 pub(crate) struct Point {
     x: usize,
     y: usize,
@@ -95,7 +104,7 @@ fn step<A, B, C, D, E, F>(
     conditions: &BoundaryConditions<A, B, C, D, E, F>,
     params: &SolverParams,
     s: &SolverInfo,
-    point: Point,
+    point: &Point,
 ) -> T
 where
     A: BoundaryCondition,

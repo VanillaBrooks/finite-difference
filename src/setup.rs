@@ -11,14 +11,15 @@ use super::top::TopSurface;
 
 use super::edge;
 
+#[derive(serde::Serialize, Clone, Copy)]
 pub(crate) struct SetupConditions<A, B, C, D, E, F>
 where
-    A: BoundaryCondition,
-    B: BoundaryCondition,
-    C: BoundaryCondition,
-    D: BoundaryCondition,
-    E: BoundaryCondition,
-    F: BoundaryCondition,
+    A: BoundaryCondition + Clone,
+    B: BoundaryCondition + Clone,
+    C: BoundaryCondition + Clone,
+    D: BoundaryCondition + Clone,
+    E: BoundaryCondition + Clone,
+    F: BoundaryCondition + Clone,
 {
     pub(crate) right_boundary: A,
     pub(crate) left_boundary: B,

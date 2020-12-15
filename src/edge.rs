@@ -10,6 +10,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.right_boundary, self.top_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.i_back + info.j_back) / 2.)
@@ -35,6 +37,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.left_boundary, self.top_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.i_front + info.j_back) / 2.)
@@ -60,6 +64,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.left_boundary, self.bot_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.i_front + info.j_front) / 2.)
@@ -85,6 +91,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.right_boundary, self.bot_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.i_back + info.j_front) / 2.)
@@ -110,6 +118,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.front_boundary, self.top_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_back + info.j_back) / 2.)
@@ -135,6 +145,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.back_boundary, self.top_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_front + info.j_back) / 2.)
@@ -160,6 +172,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.back_boundary, self.bot_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_front + info.j_front) / 2.)
@@ -185,6 +199,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.front_boundary, self.bot_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_back + info.j_front) / 2.)
@@ -216,6 +232,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.front_boundary, self.right_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_back + info.i_back) / 2.)
@@ -241,6 +259,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.front_boundary, self.left_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_back + info.i_front) / 2.)
@@ -266,6 +286,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.back_boundary, self.left_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_front + info.i_front) / 2.)
@@ -290,6 +312,8 @@ where
     K: BoundaryCondition,
 {
     fn calculate_temperature(&self, info: Information, s: &SolverInfo) -> T {
+        constant_temperature!(self.back_boundary, self.right_boundary);
+
         let area = s.del2() / 2.;
 
         let m = ((info.k_front + info.i_back) / 2.)
