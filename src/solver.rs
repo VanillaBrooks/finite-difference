@@ -1,20 +1,32 @@
+use crate::dump::{ErrorData, SimulationResult, StepData};
 use crate::prelude;
 use crate::prelude::*;
 use crate::setup::BoundaryConditions;
 use crate::SolverParams;
 
-pub(crate) fn solver<A, B, C, D, E, F>(
+pub(crate) fn solver<A, B, C, D, E, F, ErrCalc>(
     s: SolverInfo,
     params: SolverParams,
     conditions: BoundaryConditions<A, B, C, D, E, F>,
-) where
+    error_type: ErrCalc,
+) -> SimulationResult
+where
     A: BoundaryCondition,
     B: BoundaryCondition,
     C: BoundaryCondition,
     D: BoundaryCondition,
     E: BoundaryCondition,
     F: BoundaryCondition,
+    ErrCalc: CalculateError,
 {
+    let step_estimation = 10_000;
+
+    let mut error_decay = ErrorData {
+        error_type: error_type.to_error_type(),
+        data: Vec::with_capacity(step_estimation),
+    };
+    let mut step_data: Vec<StepData> = Vec::with_capacity(step_estimation);
+
     let mut previous_temps: ndarray::Array3<f64> =
         ndarray::Array3::ones((params.divisions, params.divisions, params.divisions)) * 273.;
 
@@ -240,25 +252,35 @@ pub(crate) fn solver<A, B, C, D, E, F>(
             println! {"i:{}", i}
         }
 
-        previous_temps = current_temps;
-        if i == params.iterations {
-            dbg! {&previous_temps.slice(ndarray::s!(params.div_end(), .., ..))};
-            let max: &T = previous_temps
-                .iter()
-                .max_by(|left, right| left.partial_cmp(right).unwrap())
-                .unwrap();
+        // check if we need to record this data for plotting
+        if i % params.steps_before_recording == 0 {
+            let raw_data = current_temps.clone().into_raw_vec();
 
-            let min: &T = previous_temps
-                .iter()
-                .min_by(|left, right| left.partial_cmp(right).unwrap())
-                .unwrap();
+            let new_data = StepData {
+                step: i,
+                data: raw_data,
+            };
 
-            dbg! {max};
-            dbg! {min};
-
-            //dbg! {&previous_temps.slice(ndarray::s!(params.div_end(), .., ..))};
-            break;
+            step_data.push(new_data)
         }
+
+        let curr_error = error_type.calculate_error(&previous_temps, &current_temps);
+
+        error_decay.add_error(curr_error);
+
+        if curr_error < params.error_epsilon {
+            // we are below the threshold for error right now, we can quit here
+
+            let result = SimulationResult {
+                step_data,
+                error_decay,
+                size: params.divisions,
+            };
+
+            return result;
+        }
+
+        previous_temps = current_temps;
 
         i += 1
     } // loop

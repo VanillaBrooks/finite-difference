@@ -2,6 +2,7 @@ mod back;
 mod bot;
 mod conditions;
 mod corner;
+mod dump;
 mod edge;
 mod front;
 mod internal;
@@ -46,7 +47,8 @@ fn main() {
     let params = SolverParams {
         len: 0.5,
         divisions: 30,
-        iterations: 500_000,
+        error_epsilon: 0.000001,
+        steps_before_recording: 1000,
     };
 
     let div: T = params.divisions as f64;
@@ -57,13 +59,17 @@ fn main() {
         .del(params.len / div)
         .build();
 
-    solver::solver(solver_info, params, bcs);
+    let error = prelude::L1Norm;
+
+    let result = solver::solver(solver_info, params, bcs, error);
+    dbg! {result};
 }
 
 struct SolverParams {
     len: T,
     divisions: usize,
-    pub(crate) iterations: usize,
+    pub(crate) error_epsilon: T,
+    pub(crate) steps_before_recording: usize,
 }
 impl SolverParams {
     fn div_end(&self) -> usize {
