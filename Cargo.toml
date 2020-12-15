@@ -11,3 +11,4 @@ ndarray = {version = "0.14.0", features = ["rayon"]}
 typed-builder = "0.8.0"
 serde = {version="1.0.118", features=["derive"]}
 serde_json = "1.0.60"
+rayon = "1.5.0"

@@ -75,6 +75,7 @@ name = "finite-difference"
 version = "0.1.0"
 dependencies = [
  "ndarray",
+ "rayon",
  "serde",
  "serde_json",
  "typed-builder",

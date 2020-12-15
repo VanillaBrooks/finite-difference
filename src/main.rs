@@ -4,6 +4,7 @@ mod conditions;
 mod corner;
 mod dump;
 mod edge;
+mod error;
 mod front;
 mod internal;
 mod left;
@@ -47,7 +48,7 @@ fn main() {
     let params = SolverParams {
         len: 0.5,
         divisions: 30,
-        error_epsilon: 0.000001,
+        error_epsilon: 0.0001,
         steps_before_recording: 1000,
     };
 
@@ -59,7 +60,7 @@ fn main() {
         .del(params.len / div)
         .build();
 
-    let error = prelude::L1Norm;
+    let error = error::L1Norm;
 
     let result = solver::solver(solver_info, params, bcs, error);
     dbg! {result};
