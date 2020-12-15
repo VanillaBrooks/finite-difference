@@ -3,7 +3,6 @@ use crate::prelude;
 use crate::prelude::*;
 use crate::setup::BoundaryConditions;
 use crate::SolverParams;
-use rayon::prelude::*;
 
 pub(crate) fn solver<A, B, C, D, E, F, ErrCalc>(
     s: SolverInfo,
@@ -34,28 +33,19 @@ where
 
     let mut i = 0;
 
-    let point_matrix = init_matrix(params.divisions);
-
     loop {
-        //let mut previous_temps: ndarray::Array3<f64> = ndarray::Array3::ones(matrix_shape);
+        let mut current_temps: ndarray::Array3<f64> = ndarray::Array3::ones(matrix_shape);
 
-        //for x in 0..params.divisions {
-        //    // we are on right wall
-        //    for y in 0..params.divisions {
-        //        for z in 0..params.divisions {
-        //            let point = Point { x, y, z };
-        //            //let temp = step(&previous_temps, &conditions, &params, &s, &point);
-        //            //current_temps[[x, y, z]] = temp;
-        //        }
-        //    }
-        //}
-
-        let vec_temps: Vec<T> = point_matrix
-            .into_par_iter()
-            .map(|point| step(&previous_temps, &conditions, &params, &s, point))
-            .collect();
-
-        let current_temps: Matrix = Matrix::from_shape_vec(matrix_shape, vec_temps).unwrap();
+        for x in 0..params.divisions {
+            // we are on right wall
+            for y in 0..params.divisions {
+                for z in 0..params.divisions {
+                    let point = Point { x, y, z };
+                    let temp = step(&previous_temps, &conditions, &params, &s, point);
+                    current_temps[[x, y, z]] = temp;
+                }
+            }
+        }
 
         if i % 1_000 == 0 {
             println! {"i:{}", i}
@@ -102,28 +92,13 @@ pub(crate) struct Point {
     z: usize,
 }
 
-pub(crate) fn init_matrix(size: usize) -> ndarray::Array3<Point> {
-    let mut matrix = ndarray::Array3::<Point>::default([size, size, size]);
-
-    for x in 0..size {
-        for y in 0..size {
-            for z in 0..size {
-                let point = Point { x, y, z };
-                matrix[[x, y, z]] = point;
-            }
-        }
-    }
-
-    matrix
-}
-
 /// Performs a single temperature calculation at a single step
 fn step<A, B, C, D, E, F>(
     previous_temps: &Matrix,
     conditions: &BoundaryConditions<A, B, C, D, E, F>,
     params: &SolverParams,
     s: &SolverInfo,
-    point: &Point,
+    point: Point,
 ) -> T
 where
     A: BoundaryCondition,
