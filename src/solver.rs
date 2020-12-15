@@ -32,28 +32,29 @@ where
     let mut previous_temps: ndarray::Array3<f64> = ndarray::Array3::ones(matrix_shape) * 273.;
 
     let mut i = 0;
+    let points = init_matrix(params.divisions);
 
     loop {
         let mut current_temps: ndarray::Array3<f64> = ndarray::Array3::ones(matrix_shape);
 
-        for x in 0..params.divisions {
-            // we are on right wall
-            for y in 0..params.divisions {
-                for z in 0..params.divisions {
-                    let point = Point { x, y, z };
-                    let temp = step(&previous_temps, &conditions, &params, &s, point);
-                    current_temps[[x, y, z]] = temp;
-                }
-            }
-        }
+        ndarray::Zip::from(&mut current_temps)
+            .and(&points)
+            .par_apply_collect(|temps, point| {
+                *temps = step(&previous_temps, &conditions, &params, &s, *point)
+            });
 
         if i % 1_000 == 0 {
             println! {"i:{}", i}
         }
 
+        let curr_error = error_type.calculate_error(&previous_temps, &current_temps);
+
         // check if we need to record this data for plotting
         if i % params.steps_before_recording == 0 {
+            error_decay.add_error(curr_error);
+
             let raw_data = current_temps.clone().into_raw_vec();
+            //let m = params.div_end();
 
             let new_data = StepData {
                 step: i,
@@ -62,10 +63,6 @@ where
 
             step_data.push(new_data)
         }
-
-        let curr_error = error_type.calculate_error(&previous_temps, &current_temps);
-
-        error_decay.add_error(curr_error);
 
         if curr_error < params.error_epsilon {
             // we are below the threshold for error right now, we can quit here
@@ -85,7 +82,7 @@ where
     } // loop
 }
 
-#[derive(Default, Debug)]
+#[derive(Default, Debug, Clone, Copy)]
 pub(crate) struct Point {
     x: usize,
     y: usize,
@@ -297,4 +294,19 @@ where
         (_, _, _) => conditions.internal.calculate_temperature(information, &s),
     };
     temp
+}
+
+pub(crate) fn init_matrix(size: usize) -> ndarray::Array3<Point> {
+    let mut matrix = ndarray::Array3::<Point>::default([size, size, size]);
+
+    for x in 0..size {
+        for y in 0..size {
+            for z in 0..size {
+                let point = Point { x, y, z };
+                matrix[[x, y, z]] = point;
+            }
+        }
+    }
+
+    matrix
 }

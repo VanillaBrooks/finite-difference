@@ -18,7 +18,6 @@ impl fmt::Debug for SimulationResult {
 
         f.debug_struct("SimulationResult")
             .field("step_data (latest)", last)
-            //.field("error_decay", &self.error_decay)
             .field("size", &self.size)
             .field("min", &min)
             .field("max", &max)
