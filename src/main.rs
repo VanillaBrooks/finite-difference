@@ -23,7 +23,6 @@ use std::time::Instant;
 
 fn main() {
     let now = Instant::now();
-    let flux = 50.;
     let h = 10.;
     let t_inf = 273. + 25.;
     let energy_generation = 0.;

@@ -39,7 +39,7 @@ where
 
         ndarray::Zip::from(&mut current_temps)
             .and(&points)
-            .par_apply_collect(|temps, point| {
+            .par_map_collect(|temps, point| {
                 *temps = step(&previous_temps, &conditions, &params, &s, point)
             });
 
