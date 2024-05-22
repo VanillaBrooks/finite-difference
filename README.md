@@ -101,19 +101,19 @@ These are a collection of comparisons between the results of this solver with eq
 
 ### Constant Temperature Top and Bottom with Convective Sides
 
-![static/constant_temperature/solver.png]
-![static/constant_temperature/solidworks_1.png]
-![static/constant_temperature/solidworks_2.png]
+![](static/constant_temperature/solver.png)
+![](static/constant_temperature/solidworks_1.png)
+![](static/constant_temperature/solidworks_2.png)
 
 ### Constant Heat Flux Top and Bottom with Convective Sides
 
-![static/constant_heat_flux/solver.png]
-![static/constant_heat_flux/solidworks_1.png]
-![static/constant_heat_flux/solidworks_2.png]
+![](static/constant_heat_flux/solver.png)
+![](static/constant_heat_flux/solidworks_1.png)
+![](static/constant_heat_flux/solidworks_2.png)
 
 ### Front and Top Heat Flux with Convective Sides
 
-![static/top_side_heat_flux/solver.png]
-![static/top_side_heat_flux/solidworks_1.png]
-![static/top_side_heat_flux/solidworks_2.png]
+![](static/top_side_heat_flux/solver.png)
+![](static/top_side_heat_flux/solidworks_1.png)
+![](static/top_side_heat_flux/solidworks_2.png)
 
